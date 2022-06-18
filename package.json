@@ -1,0 +1,33 @@
+{
+  "name": "vicsek-fractal-cli",
+  "version": "1.0.0",
+  "description": "Print the Vicsek Fractal to the console!",
+  "main": "./src/index.js",
+  "bin": {
+    "vicsek-fractal-cli": "./src/cli.js"
+  },
+  "files": [
+    "src"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/spirometaxas/vicsek-fractal-cli.git"
+  },
+  "scripts": {
+    "cli": "node ./src/cli.js"
+  },
+  "author": "Spiro Metaxas",
+  "license": "MIT", 
+  "keywords": [ 
+    "Vicsek", 
+    "Vicsek Fractal", 
+    "fractal",
+    "fractals", 
+    "vicsek-fractal-cli", 
+    "cli",
+    "console",
+    "terminal",
+    "shell",
+    "unicode" 
+  ]
+}
