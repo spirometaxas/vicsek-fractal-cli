@@ -1,8 +1,19 @@
 #!/usr/bin/env node
 const vicsek = require('./index.js');
 
-const printUsage = function() {
-    console.log('\nUsage:\n' + '  $ vicsek-fractal-cli <n>\n' + '  $ vicsek-fractal-cli <n> <size>\n' + '\nFlags:\n -x: Draw the diagonal version of the Vicsek Fractal\n -b: Draw using block characters\n --character=<character>: Draw using 1 specific character');
+const printUsage = function(showIntro) {
+    if (showIntro) {
+        console.log('\n Print the Vicsek Fractal to the console!');
+    }
+    console.log('\n' + 
+                ' Usage:\n' + 
+                '   $ vicsek-fractal-cli <n>\n' + 
+                '   $ vicsek-fractal-cli <n> <size>\n' + 
+                '\n' + 
+                ' Options:\n' + 
+                '   --diagonal, -d           Draw the diagonal version of the Vicsek Fractal\n' + 
+                '   --blocks, -b             Draw using block characters\n' + 
+                '   --character=<character>  Draw using 1 specific character\n');
 }
 
 const getFlags = function(params) {
@@ -29,9 +40,9 @@ const getValues = function(params) {
     return values;
 }
 
-const drawX = function(flags) {
+const drawDiagonal = function(flags) {
     for (let i = 0; i < flags.length; i++) {
-        if (flags[i] && flags[i].toLowerCase() === '-x') {
+        if (flags[i] && (flags[i].toLowerCase() === '--diagonal' || flags[i].toLowerCase() === '-d')) {
             return true;
         }
     }
@@ -40,7 +51,7 @@ const drawX = function(flags) {
 
 const drawBlocks = function(flags) {
     for (let i = 0; i < flags.length; i++) {
-        if (flags[i] && flags[i].toLowerCase() === '-b') {
+        if (flags[i] && (flags[i].toLowerCase() === '--blocks' || flags[i].toLowerCase() === '-b')) {
             return true;
         }
     }
@@ -64,10 +75,10 @@ const getCharacter = function(flags) {
                 if (character.length === 1) {
                     return character;
                 } else {
-                    console.log('\nWarning: Please provide just 1 character.  Example: --character=*');
+                    console.log('\n Warning: Please provide just 1 character.  Example: --character=*');
                 }
             } else {
-                console.log('\nWarning: Please provide 1 character.  Example: --character=*');
+                console.log('\n Warning: Please provide 1 character.  Example: --character=*');
             }
         }
     }
@@ -85,25 +96,20 @@ if (process.argv.length > 2) {
             if (!isNaN(values[1]) && parseInt(values[1]) >= n) {
                 s = parseInt(values[1]);
             } else {
-                console.log('\n<size> should be a number greater than or equal to <n>');
-                printUsage();
+                console.log('\n <size> should be a number greater than or equal to <n>');
+                printUsage(false);
             }
         } else {
             s = n;
         }
         if (n !== undefined && s !== undefined) {
-            if (drawBlocks(flags)) {
-                console.log(vicsek.create(n, s, drawX(flags), '█'));
-            } else if (drawCharacter(flags)) {
-                console.log(vicsek.create(n, s, drawX(flags), getCharacter(flags)));
-            } else {
-                console.log(vicsek.create(n, s, drawX(flags)));
-            }
+            const character = drawBlocks(flags) ? '█' : getCharacter(flags);
+            console.log(vicsek.create(n, { scale: s, diagonal: drawDiagonal(flags), character: character }));
         }
     } else {
-        console.log('\n<n> should be a number greater than or equal to 0');
-        printUsage();
+        console.log('\n <n> should be a number greater than or equal to 0');
+        printUsage(false);
     }
 } else {
-    printUsage();
+    printUsage(true);
 }

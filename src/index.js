@@ -23,29 +23,33 @@ const drawSquare = function(board, pos, scale, character) {
   var startY = pos.y - parseInt(getHeight(scale) / 2.0); 
   for (let i = 0; i < getHeight(scale); i++) {
     for (let j = 0; j < getWidth(scale); j++) {
-      board[startY + i][startX + j] = character;
+      if (character) {
+        board[startY + i][startX + j] = character;
+      } else {
+        board[startY + i][startX + j] = '\u001b[7m \u001b[0m';
+      }
     }
   }
 }
 
-const vicsek = function(n, scale, board, pos, drawX, character) {
+const vicsek = function(n, scale, board, pos, diagonal, character) {
   if (n === 0) {
     drawSquare(board, pos, scale, character);
     return;
   }
 
-  if (drawX) {
-    vicsek(n - 1, scale - 1, board, { x: pos.x, y: pos.y }, drawX, character);
-    vicsek(n - 1, scale - 1, board, { x: pos.x + getWidth(scale - 1), y: pos.y + getHeight(scale - 1) }, drawX, character);
-    vicsek(n - 1, scale - 1, board, { x: pos.x - getWidth(scale - 1), y: pos.y - getHeight(scale - 1) }, drawX, character);
-    vicsek(n - 1, scale - 1, board, { x: pos.x + getWidth(scale - 1), y: pos.y - getHeight(scale - 1) }, drawX, character);
-    vicsek(n - 1, scale - 1, board, { x: pos.x - getWidth(scale - 1), y: pos.y + getHeight(scale - 1) }, drawX, character);
+  if (diagonal) {
+    vicsek(n - 1, scale - 1, board, { x: pos.x, y: pos.y }, diagonal, character);
+    vicsek(n - 1, scale - 1, board, { x: pos.x + getWidth(scale - 1), y: pos.y + getHeight(scale - 1) }, diagonal, character);
+    vicsek(n - 1, scale - 1, board, { x: pos.x - getWidth(scale - 1), y: pos.y - getHeight(scale - 1) }, diagonal, character);
+    vicsek(n - 1, scale - 1, board, { x: pos.x + getWidth(scale - 1), y: pos.y - getHeight(scale - 1) }, diagonal, character);
+    vicsek(n - 1, scale - 1, board, { x: pos.x - getWidth(scale - 1), y: pos.y + getHeight(scale - 1) }, diagonal, character);
   } else {
-    vicsek(n - 1, scale - 1, board, { x: pos.x, y: pos.y }, drawX, character);
-    vicsek(n - 1, scale - 1, board, { x: pos.x, y: pos.y + getHeight(scale - 1) }, drawX, character);
-    vicsek(n - 1, scale - 1, board, { x: pos.x, y: pos.y - getHeight(scale - 1) }, drawX, character);
-    vicsek(n - 1, scale - 1, board, { x: pos.x + getWidth(scale - 1), y: pos.y }, drawX, character);
-    vicsek(n - 1, scale - 1, board, { x: pos.x - getWidth(scale - 1), y: pos.y }, drawX, character);
+    vicsek(n - 1, scale - 1, board, { x: pos.x, y: pos.y }, diagonal, character);
+    vicsek(n - 1, scale - 1, board, { x: pos.x, y: pos.y + getHeight(scale - 1) }, diagonal, character);
+    vicsek(n - 1, scale - 1, board, { x: pos.x, y: pos.y - getHeight(scale - 1) }, diagonal, character);
+    vicsek(n - 1, scale - 1, board, { x: pos.x + getWidth(scale - 1), y: pos.y }, diagonal, character);
+    vicsek(n - 1, scale - 1, board, { x: pos.x - getWidth(scale - 1), y: pos.y }, diagonal, character);
   }
 }
 
@@ -60,20 +64,21 @@ const draw = function(board) {
   return result;
 }
 
-const create = function(n, scale, drawX = false, character = '\u001b[7m \u001b[0m') {
+const create = function(n, config) {
   if (n === undefined || n < 0) {
     return '';
   }
-  if (scale === undefined || scale < n) {
-    scale = n;
+
+  let scale = n;
+  if (config && config.scale && config.scale > n) {
+    scale = config.scale;
   }
 
-  if (character && character !== '\u001b[7m \u001b[0m' && character.length > 1) {
-    character = '\u001b[7m \u001b[0m';
-  }
+  const diagonal = config !== undefined && config.diagonal === true;
+  const character = config !== undefined && config.character !== undefined && config.character.length === 1 ? config.character : undefined;
 
   const board = createBoard(getWidth(scale), getHeight(scale));
-  vicsek(n, scale, board, { x: parseInt(getWidth(scale) / 2.0), y: parseInt(getHeight(scale) / 2.0) }, drawX, character);
+  vicsek(n, scale, board, { x: parseInt(getWidth(scale) / 2.0), y: parseInt(getHeight(scale) / 2.0) }, diagonal, character);
   return draw(board);
 }
 
