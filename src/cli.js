@@ -104,7 +104,7 @@ if (process.argv.length > 2) {
         }
         if (n !== undefined && s !== undefined) {
             const character = drawBlocks(flags) ? '█' : getCharacter(flags);
-            console.log(vicsek.create(n, { scale: s, diagonal: drawDiagonal(flags), character: character }));
+            console.log(vicsek.create(n, { size: s, diagonal: drawDiagonal(flags), character: character }));
         }
     } else {
         console.log('\n <n> should be a number greater than or equal to 0');
