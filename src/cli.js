@@ -3,13 +3,16 @@ const vicsek = require('./index.js');
 
 const printUsage = function(showIntro) {
     if (showIntro) {
-        console.log('\n Print the Vicsek Fractal to the console!');
+        console.log(vicsek.create(2));
+        console.log(' Print the Vicsek Fractal to the console!');
     }
     console.log('\n' + 
                 ' Usage:\n' + 
                 '   $ vicsek-fractal-cli <n>\n' + 
                 '   $ vicsek-fractal-cli <n> <size>\n' + 
                 '\n' + 
+                '   <n> is the recursive step, a number greater than or equal to 0\n' + 
+                '\n' +
                 ' Options:\n' + 
                 '   --diagonal, -d           Draw the diagonal version of the Vicsek Fractal\n' + 
                 '   --blocks, -b             Draw using block characters\n' + 
